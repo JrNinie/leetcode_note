@@ -84,6 +84,11 @@ class Solution:
             else:
                 second+=1
         return temp
+      
+      
+#当然还可以加入判断列表是否为空
+if not all([num1, num2]): #all(),any()里面只接受literable
+  return []
 ```
 
 
@@ -149,10 +154,11 @@ class Solution:
 ```python
 #python解法
 
+
 #v1
 def arrangeWords(text:str) -> str:
     text = text.lower() #小写首字母
-    text = text.split(" ") #借空格分隔成数组
+    text = text.split() #借空格分隔成数组
     text.sort(key=lambda str:len(str)) #按元素的长度排序
     return  ' '.join(text).capitalize() #大写首字母
   
@@ -162,6 +168,20 @@ def arrangeWords(text):
 ```
 
 
+
+sorted(list)和list.sort()区别：
+
+```
+sort(self, /, *, key=None, reverse=False)
+  Sort the list in ascending order and return None.
+  The sort is in-place (i.e. the list itself is modified) and stable (i.e. the order of two equal elements is maintained).
+
+
+sorted(iterable, /, *, key=None, reverse=False)
+  Return a new list containing all items from the iterable in ascending order.
+    
+
+```
 
 
 
@@ -222,7 +242,7 @@ class Solution:
 
 
 
-### 只出现一次的数II
+### 只出现一次的数II+
 
 > 给定一个非空整数数组，除了某个元素只出现一次以外，其余每个元素均出现了三次。找出那个只出现了一次的元素。
 >
@@ -248,11 +268,19 @@ https://leetcode-cn.com/problems/single-number-ii/solution/single-number-ii-mo-n
 class Solution:
     def singleNumber(self, *nums):
         return (sum(set(nums))*3 - sum(nums))//2
+      
+#python:效率低下的解法
+class Solution:
+    def singleNumber(self, nums: List[int]) -> int:
+        nums_set = set(nums)
+        for n in nums_set:
+            if nums.count(n) == 1:
+                return n
 ```
 
 
 
-### 环形链表
+### 环形链表+
 
 > 给定一个链表，判断链表中是否有环。
 >
@@ -371,7 +399,31 @@ class Solution:
                 keep_nums.add(n)
 ```
 
+```python
+# python快慢指针(推荐)
+# 1. 创建一个慢指针，一次走一步，再创建一个快指针，一次走两步。
+# 2. 当快慢指针相遇，代表形参环路，该数不是快乐数。
+# 3. 若指针移动过程中，找到了 1（肯定是快指针最先找到），则当前数是一个快乐数。
 
+class Solution:
+  def is_happy(self, n:int)->bool:
+    def get_next(num:int)->int:
+      total_sum = 0
+      while num > 0:
+        num, digital = divmod(num, 10)
+        total_sum += digital**2
+      return total_sum
+    
+    slow_runner = n
+    faste_runner = get_next(n) # 其实快针是可以等于慢针的，但是因为下面while的条件之一就是 slow_runner != fast_runner，为了能进入该循环，特此写成不相等
+    while slow_runner != fast_runner and fast_runner != 1:
+      slow_runner = get_next(slow_runner)
+      fast_runner = get_next(get_next(fast_runner))
+    return fast_runner == 1
+  
+        
+
+```
 
 没懂
 
@@ -1450,4 +1502,22 @@ class Solution:
 
 
 
+
+### 生成验证码
+
+验证码必须可以包含大小写字母和0-9数字
+
+```python
+import random
+def get_random_letters(quantity:int)->str:
+        chars = []
+        for i in range(quantity):
+            random_letter_lower = chr(random.randint(97,122))
+            random_letter_upper = chr(random.randint(65, 90))
+            random_num = str(random.randint(0,9))
+            char = random.choice([random_num, random_letter_lower, random_letter_upper])
+            chars.append(char)
+        return ' '.join(chars)
+
+```
 
